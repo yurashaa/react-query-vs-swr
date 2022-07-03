@@ -1,46 +1,82 @@
-# Getting Started with Create React App
+# React Query vs SWR
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+---
 
-## Available Scripts
+### The most common problems with data fetching in React includes:
 
-In the project directory, you can run:
+- *Data is shared across all app instance and can be changed by other people.*
+- *Data could be “stale” and needs to be refreshed.*
+- *Handle caching and invalidating data to optimize the request operation.*
 
-### `npm start`
+## React Query
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+*Fetch, cache and update data in your React and React Native applications all without touching any “global state”.*
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Advantages
 
-### `npm test`
+- React-Query **automates the request process**, including the requests’ state cycle.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- It provides valuable tools **to improve reliability of server data** (invalidating data and marking data as stale).
 
-### `npm run build`
+- It provides **Tools to improve fetch UX** (prefetching, re-fetching, caching, and more).
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Disadvantages
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **This lego piece is big, and can only fit in a specific way to a specific structure**. React-Query package was built
+to be consumed by a specific kind of architecture.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **Do not provide fine-grained control over the sequence of the network requests**. Just not the ideal tool for that
+fine-grained control needed. Something like RxJS is more like it.
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## React vs SWR 
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Similarities
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- **Fetching and caching data**. `useSWR` and React Query use the `stale-while-revalidate`.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- **Suspense mode**. Both libraries support React Suspense.
 
-## Learn More
+- **Fast and reactive app state**. `useSWR()` comes out on top here, with 0.23ms to 0.55ms, React Query 0.14ms to 1.33ms.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **Auto caching**. `useSWR` and React Query automatically cache data when it is received from the network.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- **Polling**. `useSWR` and React Query both support polling, which involves constantly requesting data in intervals.
+Both libraries can poll data based on the intervals passed to them, or, when no interval is passed, they use a default interval time.
+
+### Differences
+
+- **Global fetcher**. Unlike React Query, where you have to call the fetcher as the second argument, `useSWR` enables us
+to define a global fetcher function in the configuration provider.
+
+- **Garbage collection**. React Query automatically handles garbage collection of stale and unused query data.
+
+- **Request cancellation**. In React Query, queries can be aborted or cancelled when the query becomes unresponsive,
+stale, or out-of-date. All queries in React Query are cancelled, and they can be automatic or manually triggered. This
+feature is not found `useSWR`.
+
+- **Background fetching indicator**. Both `useSWR` and React Query include an indicator that tells users that data is
+loading. But, React Query also goes a step further with a background loading indicator that tells the user that refetching
+is being done in the background.
+
+- **Methods**. SWR is more intended to get data, not update it, usually you have another function to update and after 
+it you will run mutate to update the cache and trigger a revalidation (SWR will fetch it again).
+
+## Comparing features
+
+| Queries                               | 	 React query 	 | SWR |
+|---------------------------------------|-----------------|-----|
+| Caching                               | 	 ✅             | 	 ✅ |
+| Intervals	                            | ✅               | 	 ✅ |
+| Dev tools                             | 	 ✅             |
+| Paginated Queries                     | 	 ✅ 	           | ✅   |
+| Parallel Queries                      | 	 ✅             | 	✅  |
+| Selectors                             | 	 ✅             |
+| Scroll Recovery                       | 	✅	             | ✅   |
+| Cache Manipulation	                   | ✅               | 	✅  |
+| Auto Garbage Collection               | 	✅              |
+| Prefetching APIs                      | 	✅              | 	✅  |
+| Network Status Refetching             | 	✅              | 	✅  |
+| General Cache Dehydration/Rehydration | 	✅              |
+| React Suspense (Experimental)         | 	✅              | 	✅  |

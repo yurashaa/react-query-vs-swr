@@ -1,25 +1,44 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import styled from 'styled-components';
+import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools';
+import { ReactQuery } from './components/react-query/ReactQuery';
+import { Swr } from './components/swr/Swr';
+
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            staleTime: 50000
+        }
+    },
+    queryCache: new QueryCache({
+        onError: (error, query) => {
+            console.error(`Cache: something went wrong.`, error);
+        }
+    })
+})
+
+const Wrapper = styled.div`
+  display: flex;
+`
+
+const QueryBlock = styled.div`
+  width: 50%;
+`
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Wrapper>
+      <QueryBlock>
+          <QueryClientProvider client={queryClient}>
+              <ReactQuery />
+              <ReactQueryDevtools />
+          </QueryClientProvider>
+      </QueryBlock>
+      <QueryBlock>
+          <Swr />
+      </QueryBlock>
+    </Wrapper>
   );
 }
 
